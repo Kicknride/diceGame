@@ -47,21 +47,18 @@ public class DiceGame
             System.out.println("   \\  $$/| $$  \\ $$| $$  | $$      | $$$$_  $$$$| $$| $$  \\ $$      |__/|__/|__/");
             System.out.println("    | $$ | $$  | $$| $$  | $$      | $$$/ \\  $$$| $$| $$  | $$                  ");
             System.out.println("    | $$ |  $$$$$$/|  $$$$$$/      | $$/   \\  $$| $$| $$  | $$       /$$ /$$ /$$");
-            System.out.println("    |__/  \\______/  \\______/       |__/     \\__/|__/|__/  |__/      |__/|__/|__/");        }
+            System.out.println("    |__/  \\______/  \\______/       |__/     \\__/|__/|__/  |__/      |__/|__/|__/");
+        }
         else
         {
-            System.out.println("                                                                                                                                                                  ");
-            System.out.println(" /$$     /$$                        /$$                                               /$$ /$$ /$$");
-            System.out.println("|  $$   /$$/                       | $$                                              | $$| $$| $$");
-            System.out.println(" \\  $$ /$$//$$$$$$  /$$   /$$      | $$  /$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$       | $$| $$| $$");
-            System.out.println("  \\  $$$$//$$__  $$| $$  | $$      | $$ /$$__  $$ /$$__  $$ /$$_____/ /$$__  $$      | $$| $$| $$");
-            System.out.println("   \\  $$/| $$  \\ $$| $$  | $$      | $$| $$  \\ $$| $$  \\ $$|  $$$$$$ | $$$$$$$$      |__/|__/|__/");
-            System.out.println("    | $$ | $$  | $$| $$  | $$      | $$| $$  | $$| $$  | $$ \\____  $$| $$_____/                  ");
-            System.out.println("    | $$ |  $$$$$$/|  $$$$$$/      | $$|  $$$$$$/|  $$$$$$/ /$$$$$$$/|  $$$$$$$       /$$ /$$ /$$");
-            System.out.println("    |__/  \\______/  \\______/       |__/ \\______/  \\______/ |_______/  \\_______/      |__/|__/|__/");
-            System.out.println("                                                                                                 ");
-            System.out.println("");
-            System.out.println("");
+            System.out.println(" /$$     /$$                        /$$");
+            System.out.println("|  $$   /$$/                       | $$");
+            System.out.println(" \\  $$ /$$//$$$$$$  /$$   /$$      | $$  /$$$$$$   /$$$$$$   /$$$$$$$  /$$$$$$");
+            System.out.println("  \\  $$$$//$$__  $$| $$  | $$      | $$ /$$__  $$ /$$__  $$ /$$_____/ /$$__  $$");
+            System.out.println("   \\  $$/| $$  \\ $$| $$  | $$      | $$| $$  \\ $$| $$  \\ $$|  $$$$$$ | $$$$$$$$");
+            System.out.println("    | $$ | $$  | $$| $$  | $$      | $$| $$  | $$| $$  | $$ \\____  $$| $$_____/");
+            System.out.println("    | $$ |  $$$$$$/|  $$$$$$/      | $$|  $$$$$$/|  $$$$$$/ /$$$$$$$/|  $$$$$$$");
+            System.out.println("    |__/  \\______/  \\______/       |__/ \\______/  \\______/ |_______/  \\_______/");
         }
     }
 
@@ -337,7 +334,7 @@ public class DiceGame
              * On demande les dés à rejeter si non IA.
              */
             String reloadDiceString = getValueFromQuestion("Saisir le(s) numéro(s) de dé(s) à rejouer?\n\"all\" pour tous les dés : ", LG_COMMAND_DICE_MIN, LG_COMMAND_DICE_MAX, false);
-            numDice = extractDiceToReladFromString(reloadDiceString);
+            numDice = extractDiceToReloadFromString(reloadDiceString);
         }
         else
         {
@@ -345,7 +342,7 @@ public class DiceGame
              * Algorithme de l'IA pour choisir les dés.
              */
             String reloadDiceString = getStringDiceByAI(valueDice);
-            numDice = extractDiceToReladFromString(reloadDiceString);
+            numDice = extractDiceToReloadFromString(reloadDiceString);
         }
 
         if (numDice != null)
@@ -367,7 +364,7 @@ public class DiceGame
         }
         else
         {
-            scoreTmp2 = scoreCalculation(valueDice2);
+            scoreTmp2 = scoreCalculation(valueDice);
             score = scoreTmp2;
         }
 
@@ -471,10 +468,10 @@ public class DiceGame
     /**
      * Méthode extractant les numéros de dés à partir d'une chaine
      * @since 1.0
-     * @param reloadDiceString la chaine contenant les numéros de dés
-     * @return Le tableau des numéros de dés
+     * @param reloadDiceString la chaine contenant les numéros de dés à relancer
+     * @return Le tableau des numéros de dés à relancer
      */
-    private static byte[] extractDiceToReladFromString(String reloadDiceString)
+    private static byte[] extractDiceToReloadFromString(String reloadDiceString)
     {
         if (reloadDiceString.length() > 0)
         {
