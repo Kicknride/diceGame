@@ -36,7 +36,7 @@ public class DiceGame
      * @param winnerIndice Indice du joueur gagnant
      * @since 1.0
      */
-    private static void displayWinLooseMessage(short winnerIndice)
+    private static void displayWinLooseMessage(int winnerIndice)
     {
         if (winnerIndice == 0)
         {
@@ -98,7 +98,7 @@ public class DiceGame
     }
 
     /**
-     * Affichage du menu
+     * Affichage du menu (help)
      * @since 1.0
      */
         private static void displayHelp()
@@ -118,7 +118,7 @@ public class DiceGame
      * Affichage des règles
      * @since 1.0
      */
-    private static void displayRules(short upToOpen)
+    private static void displayRules(int upToOpen)
     {
         System.out.println("Règles du jeu 10000 (source: Wikipédia) :");
         System.out.println("Dans le temps, ce jeu était plus particulièrement joué par les marins (ou pour les plus fantaisistes par les pirates), " +
@@ -153,7 +153,7 @@ public class DiceGame
      * Affichage du barème de points
      * @since 1.0
      */
-    private static void displayScoring(short upToOpen)
+    private static void displayScoring(int upToOpen)
     {
         System.out.println("Barème de points (source: Wikipédia) :");
         System.out.println("- Pour démarrer, il faut avoir dans un seul lancer un minimum de " + upToOpen + " points\n" +
@@ -182,12 +182,12 @@ public class DiceGame
      * @param nbTurn nombre de tours effectués
      * @param upToGo score à atteindre
      */
-    private static void displayScore(byte nbPlayers, String[] playerName, short[] playerScore, int nbTurn, short upToGo, short upToOpen)
+    private static void displayScore(int nbPlayers, String[] playerName, int[] playerScore, int nbTurn, int upToGo, int upToOpen)
     {
         System.out.println("*******************************************************************************");
         System.out.println("* Nom des joueurs                                               * Score       *");
         System.out.println("*******************************************************************************");
-        for (byte loopPlayer = 0; loopPlayer < nbPlayers; loopPlayer++)
+        for (int loopPlayer = 0; loopPlayer < nbPlayers; loopPlayer++)
         {
             System.out.print("* " + playerName[loopPlayer]);
             for (int spaceLoop = 0; spaceLoop < 62 - playerName[loopPlayer].length(); spaceLoop++)
@@ -222,17 +222,17 @@ public class DiceGame
      * @param scoreJet2 résultat du lancé de dés n°2
      * @param isSecondJet indique si le deuximème jet a été effectué
      */
-    private static void displayDiceResult(byte[] diceJet1, byte[] diceJet2, short scoreJet1, short scoreJet2, boolean isSecondJet)
+    private static void displayDiceResult(int[] diceJet1, int[] diceJet2, int scoreJet1, int scoreJet2, boolean isSecondJet)
     {
-        byte nbDiceJet1 = (byte) diceJet1.length;
-        byte nbDiceJet2 = (byte) diceJet2.length;
+        int nbDiceJet1 = (int) diceJet1.length;
+        int nbDiceJet2 = (int) diceJet2.length;
 
         System.out.println("===============================================================================");
         System.out.println("| Dé n°                       |   1   |   2   |   3   |   4   |   5   |   6   |");
         System.out.println("===============================================================================");
 
         System.out.print("| Résultat jet 1              ");
-        for (byte loopDice = 0; loopDice < nbDiceJet1; loopDice++)
+        for (int loopDice = 0; loopDice < nbDiceJet1; loopDice++)
         {
                 System.out.print("|   ");
                 if (diceJet1[loopDice] == 0)
@@ -276,9 +276,9 @@ public class DiceGame
         {
             System.out.print("| Score définitif du tour     |");
         }
-        short scoreTotal = (short) (scoreJet1 + scoreJet2);
+        int scoreTotal = (int) (scoreJet1 + scoreJet2);
         System.out.print("   " + scoreTotal);
-        for (byte spaceLoop = 0; spaceLoop < 44 - Integer.toString(scoreTotal).length(); spaceLoop++)
+        for (int spaceLoop = 0; spaceLoop < 44 - Integer.toString(scoreTotal).length(); spaceLoop++)
         {
                 System.out.print(" ");
         }
@@ -294,17 +294,17 @@ public class DiceGame
      * @param isAI indique si le joueur est une IA
      * @return le score obtenu et à ajouter
      */
-    private static short playTheDice(boolean playerIsOpen, short upToOpen, boolean isAI)
+    private static int playTheDice(boolean playerIsOpen, int upToOpen, boolean isAI)
     {
-        final byte LG_COMMAND_DICE_MIN = 1;
-        final byte LG_COMMAND_DICE_MAX = 12;
-        short score         = 0;                        //  stocke le score du tour à retrouner
-        short scoreTmp      = 0;
-        short scoreTmp2     = 0;
-        byte nbDice         = 6;                        //  stocke le nombre de dés (défaut 6) => changement par l'utilisation d'arguments ?
-        byte[] valueDice    = new byte[nbDice];         //  stocke le résultat du lancer 1 de dé
-        byte[] valueDice2   = new byte[nbDice];         //  stocke le résultat du lancer 2 de dé
-        byte[] numDice;                                 //  stocke les numéros de dés lancés
+        final int LG_COMMAND_DICE_MIN = 1;
+        final int LG_COMMAND_DICE_MAX = 12;
+        int score         = 0;                        //  stocke le score du tour à retrouner
+        int scoreTmp      = 0;
+        int scoreTmp2     = 0;
+        int nbDice         = 6;                        //  stocke le nombre de dés (défaut 6) => changement par l'utilisation d'arguments ?
+        int[] valueDice    = new int[nbDice];         //  stocke le résultat du lancer 1 de dé
+        int[] valueDice2   = new int[nbDice];         //  stocke le résultat du lancer 2 de dé
+        int[] numDice;                                 //  stocke les numéros de dés lancés
 
 
         valueDice = launchTheDice(nbDice);
@@ -360,7 +360,7 @@ public class DiceGame
             }
             scoreTmp = scoreCalculation(valueDice);
             scoreTmp2 = scoreCalculation(valueDice2);
-            score = (short) (scoreTmp + scoreTmp2);
+            score = (int) (scoreTmp + scoreTmp2);
         }
         else
         {
@@ -399,13 +399,13 @@ public class DiceGame
      * @since 1.0
      * @return Le résultat du dé de 1 à 6
      */
-    private static byte randomDice()
+    private static int randomDice()
     {
         int min = 1;
         int max = 6;
         Random rand = new Random();
         int dice = rand.nextInt(max - min + 1) + min;
-        return (byte) dice;
+        return (int) dice;
     }
 
     /**
@@ -417,7 +417,7 @@ public class DiceGame
      * @param isAI Indique si le joueur est une IA
      * @return Vrai ou Faux
      */
-    private static boolean playerHasOpen(short scoreTmp, short upToOpen, boolean playerIsOpen, boolean isAI)
+    private static boolean playerHasOpen(int scoreTmp, int upToOpen, boolean playerIsOpen, boolean isAI)
     {
         if (scoreTmp < upToOpen && !playerIsOpen)
         {
@@ -440,9 +440,9 @@ public class DiceGame
      * @param nbDice le nombre de dés à lancer
      * @return un tableau contenant le résultat du jet de dés
      */
-    private static byte[] launchTheDice(byte nbDice)
+    private static int[] launchTheDice(int nbDice)
     {
-        byte[] valueDice    = new byte[nbDice];
+        int[] valueDice    = new int[nbDice];
         for (int loop = 0; loop < nbDice; loop++)
         {
             valueDice[loop] = randomDice();
@@ -456,9 +456,9 @@ public class DiceGame
      * @param valueDice le tableau du premier jet
      * @return La chaine de dés à relancer
      */
-    private static String getStringDiceByAI(byte[] valueDice)
+    private static String getStringDiceByAI(int[] valueDice)
     {
-        byte nbDice = (byte) valueDice.length;
+        int nbDice = (int) valueDice.length;
         String stringDice = "";
 
 
@@ -471,12 +471,12 @@ public class DiceGame
      * @param reloadDiceString la chaine contenant les numéros de dés à relancer
      * @return Le tableau des numéros de dés à relancer
      */
-    private static byte[] extractDiceToReloadFromString(String reloadDiceString)
+    private static int[] extractDiceToReloadFromString(String reloadDiceString)
     {
         if (reloadDiceString.length() > 0)
         {
             if (reloadDiceString.equals("all")){
-                byte[] numDice = { 1, 2, 3, 4, 5, 6};
+                int[] numDice = { 1, 2, 3, 4, 5, 6};
                 return numDice;
             }
             else
@@ -486,7 +486,7 @@ public class DiceGame
                 // compter le nombre de chiffre
                 // créer le tableau numDice et affecter les valeurs
                 String diceNumber = reloadDiceString.replaceAll(" ", "");
-                byte[] numDice    = new byte[diceNumber.length()];
+                int[] numDice    = new int[diceNumber.length()];
                 for (int loop = 0; loop < diceNumber.length(); loop++)
                 {
                     numDice[loop] = Byte.parseByte(Character.toString(diceNumber.charAt(loop)));
@@ -501,18 +501,18 @@ public class DiceGame
     }
 
      /**
-     * Méthode de récupératon d'un byte par questionnement
+     * Méthode de récupératon d'un int par questionnement
      * @since 1.0
      * @param question chaine correspondant à la question posée
      * @param min nombre minimum admissible
      * @param max nombre maximum admissible
-     * @return la réponse donnée de type byte
-     * @see getValueFromQuestion(String question, byte min, byte max, boolean nothingToDo)
+     * @return la réponse donnée de type int
+     * @see getValueFromQuestion(String question, int min, int max, boolean nothingToDo)
      */
-    private static byte getValueFromQuestion(String question, byte min, byte max)
+    private static int getValueFromQuestion(String question, int min, int max)
     {
         Scanner scan = new Scanner(System.in);
-        byte answer = -1;
+        int answer = -1;
         System.out.print(question);
         while (answer < min || answer > max)
         {
@@ -545,9 +545,9 @@ public class DiceGame
      * @param min nombre minimum de caractères admissibles
      * @param max nombre maximum de caractères admissibles
      * @return la réponse donnée de type String
-     * @see getValueFromQuestion(String question, byte min, byte max)
+     * @see getValueFromQuestion(String question, int min, int max)
      */
-    private static String getValueFromQuestion(String question, byte min, byte max, boolean nothingToDo)
+    private static String getValueFromQuestion(String question, int min, int max, boolean nothingToDo)
     {
         Scanner scan = new Scanner(System.in);
         String answer = "";
@@ -582,16 +582,16 @@ public class DiceGame
      * @param valueDice tableau de résultat du jet de dé
      * @return Le résultat du score
      */
-    private static short scoreCalculation(byte[] valueDice)
+    private static int scoreCalculation(int[] valueDice)
     {
-        short scoreTmp  = 0;
-        short score     = 0;
-        byte nbValue1   = 0;
-        byte nbValue2   = 0;
-        byte nbValue3   = 0;
-        byte nbValue4   = 0;
-        byte nbValue5   = 0;
-        byte nbValue6   = 0;    // stocke respectivement le nombre de dés de valeur X
+        int scoreTmp  = 0;
+        int score     = 0;
+        int nbValue1   = 0;
+        int nbValue2   = 0;
+        int nbValue3   = 0;
+        int nbValue4   = 0;
+        int nbValue5   = 0;
+        int nbValue6   = 0;    // stocke respectivement le nombre de dés de valeur X
 
         for (int loop = 0; loop < valueDice.length; loop++)
         {
@@ -623,8 +623,8 @@ public class DiceGame
         /*
          * Traitement des points individuels
          */
-        if (nbValue1 <= 2 && nbValue1 > 0) scoreTmp = (short) (nbValue1 * 100);     //  en dessous de 3 "1". les "1" valent 100 points
-        if (nbValue5 <= 2 && nbValue5 > 0) scoreTmp += (short) (nbValue5 * 50);      //  en dessous de 3 "5". les "1" valent 50 points
+        if (nbValue1 <= 2 && nbValue1 > 0) scoreTmp = (int) (nbValue1 * 100);     //  en dessous de 3 "1". les "1" valent 100 points
+        if (nbValue5 <= 2 && nbValue5 > 0) scoreTmp += (int) (nbValue5 * 50);      //  en dessous de 3 "5". les "1" valent 50 points
         score += scoreTmp;
 
         /*
@@ -722,8 +722,8 @@ public class DiceGame
         {
             score = 600;
             scoreTmp = 0;
-            if (nbValue1 == 2) scoreTmp = (short) (100);     //  si égal 2 "1", on ajoute 100 points
-            if (nbValue5 == 2) scoreTmp = (short) (50);      //  si égal 2 "5", on ajoute 50 points
+            if (nbValue1 == 2) scoreTmp = (int) (100);     //  si égal 2 "1", on ajoute 100 points
+            if (nbValue5 == 2) scoreTmp = (int) (50);      //  si égal 2 "5", on ajoute 50 points
             score += scoreTmp;
         }
         return score;
@@ -737,12 +737,12 @@ public class DiceGame
         /*
          * Déclaration des constantes.
          */
-        final byte NB_PLAYER_MIN = 2;
-        final byte NB_PLAYER_MAX = 127;
-        final byte LG_NAME_MIN = 3;
-        final byte LG_NAME_MAX = 30;
-        final byte LG_COMMAND_MIN = 1;
-        final byte LG_COMMAND_MAX = 7;
+        final int NB_PLAYER_MIN = 2;
+        final int NB_PLAYER_MAX = 127;
+        final int LG_NAME_MIN = 3;
+        final int LG_NAME_MAX = 30;
+        final int LG_COMMAND_MIN = 1;
+        final int LG_COMMAND_MAX = 7;
 
         /*
          * Déclaration des variables globales.
@@ -750,12 +750,12 @@ public class DiceGame
         boolean quitTheGame     = false;                    //  stocke si le jeu est fini ou non. Sert pour la boucle principale
         boolean endOfTheGame    = false;                    //  Vérifie si un joueur à atteint le score nécessaire. Sert pour la boucle principale
         boolean endOfTurn       = false;                    //  défini si le tour est terminé pour le joueur
-        byte    nbPlayers       = 2;                        //  stocke le nombre de joureurs (1 humain + n IA) par défaut 2 (limite 127 ?) => changement par l'utilisation d'arguments ?
-        byte    winnerIndice    = -1;                       //  Indice du joueur qui gagne la partie
+        int    nbPlayers       = 2;                        //  stocke le nombre de joureurs (1 humain + n IA) par défaut 2 (limite 127 ?) => changement par l'utilisation d'arguments ?
+        int    winnerIndice    = -1;                       //  Indice du joueur qui gagne la partie
         int     nbTurn          = 0;                        //  stocke le numéro du tour actuel (démarre à #0)
-        short   scoreToAdd      = 0;                        //  stocke le score du tour
-        short   upToGo          = 10000;                    //  stocke le score à atteindre
-        short   upToOpen        = 700;                      //  stocke le score pour ouvrir en un seul jet
+        int   scoreToAdd      = 0;                        //  stocke le score du tour
+        int   upToGo          = 10000;                    //  stocke le score à atteindre
+        int   upToOpen        = 700;                      //  stocke le score pour ouvrir en un seul jet
         String  playerCommand   = "";                       //  stocke la commande du joueur
 
         /*
@@ -772,7 +772,7 @@ public class DiceGame
          * Déclaration des variables 'dynamiques': tableaux dépendants des réponses du joueurs.
          */
         boolean[] playerIsAI    = new boolean[nbPlayers];   //  stocke si le joueur est une IA
-        short[]   playerScore   = new short[nbPlayers];     //  stocke le score de chaque joueur (limite 32767 ?)
+        int[]   playerScore   = new int[nbPlayers];     //  stocke le score de chaque joueur (limite 32767 ?)
         String[]  playerName    = new String[nbPlayers];    //  stocke le nom du joueur [indice = numéro du joueur]
         boolean[] playerIsOpen  = new boolean[nbPlayers];   //  stocke si le joueur a ouvert
 
@@ -787,7 +787,7 @@ public class DiceGame
         /*
          * Initialisation des autres joueurs (IA).
          */
-        for (byte loopPlayer = 1; loopPlayer < nbPlayers; loopPlayer++)
+        for (int loopPlayer = 1; loopPlayer < nbPlayers; loopPlayer++)
         {
             playerName[loopPlayer]      = "Joueur " + loopPlayer;
             playerIsAI[loopPlayer]      = true;
@@ -816,7 +816,7 @@ public class DiceGame
             /*
              * Boucle sur tous les joueurs.
              */
-            for (byte loopPlayer = 0; loopPlayer < nbPlayers; loopPlayer++)
+            for (int loopPlayer = 0; loopPlayer < nbPlayers; loopPlayer++)
             {
                 endOfTurn = false;
 
@@ -937,7 +937,7 @@ public class DiceGame
             {
                 int nbPlayersFinished = 0;
 
-                for (byte loopPlayer = 0; loopPlayer < nbPlayers; loopPlayer++)
+                for (int loopPlayer = 0; loopPlayer < nbPlayers; loopPlayer++)
                 {
                     if (playerScore[loopPlayer] > upToGo) nbPlayersFinished += 1;
                 }
@@ -947,9 +947,9 @@ public class DiceGame
                     /*
                      * On annule le tour pour tout le monde.
                      */
-                    for (byte loopPlayer = 0; loopPlayer < nbPlayers; loopPlayer++)
+                    for (int loopPlayer = 0; loopPlayer < nbPlayers; loopPlayer++)
                     {
-                        if (playerScore[loopPlayer] > upToGo) playerScore[loopPlayer] = (short) (playerScore[loopPlayer] - 2 * (playerScore[loopPlayer]-upToGo));
+                        if (playerScore[loopPlayer] > upToGo) playerScore[loopPlayer] = (int) (playerScore[loopPlayer] - 2 * (playerScore[loopPlayer]-upToGo));
                     }
                     endOfTheGame = false;
                 }
@@ -958,11 +958,11 @@ public class DiceGame
                     /*
                      * On remet le score normal pour un affichage correct.
                      */
-                    for (byte loopPlayer = 0; loopPlayer < nbPlayers; loopPlayer++)
+                    for (int loopPlayer = 0; loopPlayer < nbPlayers; loopPlayer++)
                     {
                         if (playerScore[loopPlayer] > upToGo)
                         {
-                            playerScore[loopPlayer] = (short) (playerScore[loopPlayer] - (playerScore[loopPlayer]-upToGo));
+                            playerScore[loopPlayer] = (int) (playerScore[loopPlayer] - (playerScore[loopPlayer]-upToGo));
                             winnerIndice = loopPlayer;
                         }
                     }
