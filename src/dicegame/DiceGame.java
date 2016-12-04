@@ -139,7 +139,7 @@ public class DiceGame
             "requis).\n" +
             "\n" +
             "Lorsque la main est pleine (tous les dés valent des points), on est obligé de relancer les dés. On additionne les points de " +
-            "chaque lancer. Si, lors d'un lancer on ne fait aucun point, on perd tout ce qui avait été accumulé et c'est au suivant de " +
+            "chaque lancer. Si, lors d'un tour on ne fait aucun point, on perd tout ce qui avait été accumulé et c'est au suivant de " +
             "jouer. Si on ne fait aucun point lors d'un lancer des dés, on ne marque aucun point, on perd même 1000 points à 6 dés" +
             ", ce qui s'appelle \"faire une fleur\". Cependant, on ne peut devenir négatif. Si on était déjà ouvert, " +
             "on le reste, même si on descend en dessous du minimum requis pour ouvrir.\n" +
@@ -296,21 +296,24 @@ public class DiceGame
      */
     private static int playTheDice(boolean playerIsOpen, int upToOpen, boolean isAI)
     {
-        final int LG_COMMAND_DICE_MIN = 1;
-        final int LG_COMMAND_DICE_MAX = 12;
-        int score         = 0;                        //  stocke le score du tour à retrouner
-        int scoreTmp      = 0;
-        int scoreTmp2     = 0;
-        int nbDice         = 6;                        //  stocke le nombre de dés (défaut 6) => changement par l'utilisation d'arguments ?
-        int[] valueDice    = new int[nbDice];         //  stocke le résultat du lancer 1 de dé
-        int[] valueDice2   = new int[nbDice];         //  stocke le résultat du lancer 2 de dé
-        int[] numDice;                                 //  stocke les numéros de dés lancés
-
+        final int LG_COMMAND_DICE_MIN   = 1;
+        final int LG_COMMAND_DICE_MAX   = 12;
+        final String    ASK_NUM_DICE    = "Saisir le(s) numéro(s) de dé(s) à rejouer?\n\"all\" pour tous les dés : ";
+        int score                       = 0;                //  stocke le score du tour à retrouner
+        int scoreTmp                    = 0;
+        int scoreTmp2                   = 0;
+        int nbDice                      = 6;                //  stocke le nombre de dés (défaut 6) => changement par l'utilisation d'arguments ?
+        int nbDiceOk                    = 0;
+        int[] valueDice                 = new int[nbDice];  //  stocke le résultat du lancer 1 de dé
+        int[] valueDice2                = new int[nbDice];  //  stocke le résultat du lancer 2 de dé
+        int[] numDice;                                      //  stocke les numéros de dés lancés
+        int[] tabResult                 = new int[2];
 
         valueDice = launchTheDice(nbDice);
-        scoreTmp = scoreCalculation(valueDice);
-
-
+        tabResult = scoreCalculation(valueDice);
+        scoreTmp  = tabResult[0];
+        nbDiceOk  = tabResult[1];
+        
         /*
          * Affichage du premier jet si non IA.
          */
@@ -333,7 +336,11 @@ public class DiceGame
             /*
              * On demande les dés à rejeter si non IA.
              */
-            String reloadDiceString = getValueFromQuestion("Saisir le(s) numéro(s) de dé(s) à rejouer?\n\"all\" pour tous les dés : ", LG_COMMAND_DICE_MIN, LG_COMMAND_DICE_MAX, false);
+            String reloadDiceString = getValueFromQuestion(
+                    ASK_NUM_DICE,
+                    LG_COMMAND_DICE_MIN,
+                    LG_COMMAND_DICE_MAX,
+                    false);
             numDice = extractDiceToReloadFromString(reloadDiceString);
         }
         else
@@ -345,7 +352,7 @@ public class DiceGame
             numDice = extractDiceToReloadFromString(reloadDiceString);
         }
 
-        if (numDice != null)
+        if (numDice != null) // On traite le deuxieme Jet
         {
             for (int replaceLoop = 0; replaceLoop < nbDice; replaceLoop++)
             {
@@ -358,16 +365,35 @@ public class DiceGame
                     }
                 }
             }
-            scoreTmp = scoreCalculation(valueDice);
-            scoreTmp2 = scoreCalculation(valueDice2);
-            score = (int) (scoreTmp + scoreTmp2);
+            tabResult   = scoreCalculation(valueDice);
+            scoreTmp    = tabResult[0];
+            nbDiceOk    = tabResult[1];
+            tabResult   = scoreCalculation(valueDice2);
+            scoreTmp2   = tabResult[0];
+            
+            if (nbDiceOk == nbDice && scoreTmp2 == 0)
+            {
+                score = -1000;
+            }                    
+            if (nbDiceOk == nbDice && scoreTmp2 > 0)
+            {
+                score = (int) (scoreTmp + scoreTmp2);
+            }                    
+            if (nbDiceOk < nbDice && scoreTmp2 == 0)
+            {
+                score = (int) (scoreTmp);
+            }
+            if (nbDiceOk < nbDice && scoreTmp2 > 0)
+            {
+                score = (int) (scoreTmp + scoreTmp2);
+            }                    
         }
         else
         {
-            scoreTmp2 = scoreCalculation(valueDice);
-            score = scoreTmp2;
+            tabResult   = scoreCalculation(valueDice);
+            scoreTmp2   = tabResult[0];
+            score       = scoreTmp2;
         }
-
 
         /*
          * Affichage du deuxième jet si non IA
@@ -401,10 +427,10 @@ public class DiceGame
      */
     private static int randomDice()
     {
-        int min = 1;
-        int max = 6;
+        int min     = 1;
+        int max     = 6;
         Random rand = new Random();
-        int dice = rand.nextInt(max - min + 1) + min;
+        int dice    = rand.nextInt(max - min + 1) + min;
         return (int) dice;
     }
 
@@ -442,7 +468,7 @@ public class DiceGame
      */
     private static int[] launchTheDice(int nbDice)
     {
-        int[] valueDice    = new int[nbDice];
+        int[] valueDice = new int[nbDice];
         for (int loop = 0; loop < nbDice; loop++)
         {
             valueDice[loop] = randomDice();
@@ -485,8 +511,8 @@ public class DiceGame
                 // verifier qu'il n'y a que des chiffres
                 // compter le nombre de chiffre
                 // créer le tableau numDice et affecter les valeurs
-                String diceNumber = reloadDiceString.replaceAll(" ", "");
-                int[] numDice    = new int[diceNumber.length()];
+                String diceNumber   = reloadDiceString.replaceAll(" ", "");
+                int[] numDice       = new int[diceNumber.length()];
                 for (int loop = 0; loop < diceNumber.length(); loop++)
                 {
                     numDice[loop] = Byte.parseByte(Character.toString(diceNumber.charAt(loop)));
@@ -511,8 +537,8 @@ public class DiceGame
      */
     private static int getValueFromQuestion(String question, int min, int max)
     {
-        Scanner scan = new Scanner(System.in);
-        int answer = -1;
+        Scanner scan    = new Scanner(System.in);
+        int answer      = -1;
         System.out.print(question);
         while (answer < min || answer > max)
         {
@@ -549,8 +575,8 @@ public class DiceGame
      */
     private static String getValueFromQuestion(String question, int min, int max, boolean nothingToDo)
     {
-        Scanner scan = new Scanner(System.in);
-        String answer = "";
+        Scanner scan    = new Scanner(System.in);
+        String answer   = "";
         System.out.print(question);
         while (answer.length() < min || answer.length() > max)
         {
@@ -580,18 +606,20 @@ public class DiceGame
      * Méthode donnant le calcul du score
      * @since 1.0
      * @param valueDice tableau de résultat du jet de dé
-     * @return Le résultat du score
+     * @return Un tableau avec le résultat du score dans [0] et le nombre de dés valant des points dans [1] 
      */
-    private static int scoreCalculation(int[] valueDice)
+    private static int[] scoreCalculation(int[] valueDice)
     {
-        int scoreTmp  = 0;
-        int score     = 0;
-        int nbValue1   = 0;
-        int nbValue2   = 0;
-        int nbValue3   = 0;
-        int nbValue4   = 0;
-        int nbValue5   = 0;
-        int nbValue6   = 0;    // stocke respectivement le nombre de dés de valeur X
+        int[] result    =  new int[2];
+        int nbDiceOk    = 0;
+        int scoreTmp    = 0;
+        int score       = 0;
+        int nbValue1    = 0;
+        int nbValue2    = 0;
+        int nbValue3    = 0;
+        int nbValue4    = 0;
+        int nbValue5    = 0;
+        int nbValue6    = 0;    // stocke respectivement le nombre de dés de valeur X
 
         for (int loop = 0; loop < valueDice.length; loop++)
         {
@@ -623,8 +651,18 @@ public class DiceGame
         /*
          * Traitement des points individuels
          */
-        if (nbValue1 <= 2 && nbValue1 > 0) scoreTmp = (int) (nbValue1 * 100);     //  en dessous de 3 "1". les "1" valent 100 points
-        if (nbValue5 <= 2 && nbValue5 > 0) scoreTmp += (int) (nbValue5 * 50);      //  en dessous de 3 "5". les "1" valent 50 points
+        if (nbValue1 <= 2 && nbValue1 > 0)
+        {
+            //  en dessous de 3 "1". les "1" valent 100 points
+            scoreTmp = (int) (nbValue1 * 100);
+            nbDiceOk = nbValue1;
+        }
+        if (nbValue5 <= 2 && nbValue5 > 0)
+        {
+            //  en dessous de 3 "5". les "1" valent 50 points
+            scoreTmp += (int) (nbValue5 * 50);
+            nbDiceOk += nbValue5;
+        }      
         score += scoreTmp;
 
         /*
@@ -634,37 +672,43 @@ public class DiceGame
         if (nbValue1 >= 3) scoreTmp = 1000;
         if (nbValue1 >= 4) scoreTmp *= 2;
         if (nbValue1 >= 5) scoreTmp *= 2;
-        score += scoreTmp;
+        score       += scoreTmp;
+        nbDiceOk    += nbValue1;
 
         scoreTmp = 0;
         if (nbValue2 >= 3) scoreTmp = 200;
         if (nbValue2 >= 4) scoreTmp *= 2;
         if (nbValue2 >= 5) scoreTmp *= 2;
-        score += scoreTmp;
+        score       += scoreTmp;
+        nbDiceOk    += nbValue2;
 
         scoreTmp = 0;
         if (nbValue3 >= 3) scoreTmp = 300;
         if (nbValue3 >= 4) scoreTmp *= 2;
         if (nbValue3 >= 5) scoreTmp *= 2;
-        score += scoreTmp;
+        score       += scoreTmp;
+        nbDiceOk    += nbValue3;
 
         scoreTmp = 0;
         if (nbValue4 >= 3) scoreTmp = 400;
         if (nbValue4 >= 4) scoreTmp *= 2;
         if (nbValue4 >= 5) scoreTmp *= 2;
-        score += scoreTmp;
+        score       += scoreTmp;
+        nbDiceOk    += nbValue4;
 
         scoreTmp = 0;
         if (nbValue5 >= 3) scoreTmp = 500;
         if (nbValue5 >= 4) scoreTmp *= 2;
         if (nbValue5 >= 5) scoreTmp *= 2;
-        score += scoreTmp;
+        score       += scoreTmp;
+        nbDiceOk    += nbValue5;
 
         scoreTmp = 0;
         if (nbValue6 >= 3) scoreTmp = 600;
         if (nbValue6 >= 4) scoreTmp *= 2;
         if (nbValue6 >= 5) scoreTmp *= 2;
-        score += scoreTmp;
+        score       += scoreTmp;
+        nbDiceOk    += nbValue6;
 
         /*
          * Traitement des triple doubles
@@ -693,25 +737,49 @@ public class DiceGame
                 (nbValue3 == 2 && nbValue5 == 2 && nbValue6 == 2) ||
                 (nbValue4 == 2 && nbValue5 == 2 && nbValue6 == 2))
         {
-            score = 600;                                        //  en cas de triple double : 600, pas d'ajout de points
+            score       = 600; //  en cas de triple double : 600, pas d'ajout de points
+            nbDiceOk    = 6;    // Tous les dés sont utilisé
         }
 
         /*
          * Traitement des sextuples
          */
-        if (nbValue1 == 6) score = 10000;
-        if (nbValue2 == 6) score = 2000;
-        if (nbValue3 == 6) score = 3000;
-        if (nbValue4 == 6) score = 4000;
-        if (nbValue5 == 6) score = 5000;
-        if (nbValue6 == 6) score = 6000;
+        if (nbValue1 == 6){
+            score       = 10000;
+            nbDiceOk    = 6;
+        }
+        if (nbValue2 == 6){
+            score       = 2000;
+            nbDiceOk    = 6;
+        }
+        if (nbValue3 == 6)
+        {
+            score       = 3000;
+            nbDiceOk    = 6;
+        }
+        if (nbValue4 == 6)
+        {
+            score       = 4000;
+            nbDiceOk    = 6;
+        }
+        if (nbValue5 == 6)
+        {
+            score       = 5000;
+            nbDiceOk    = 6;
+        }
+        if (nbValue6 == 6)
+        {
+            score       = 6000;
+            nbDiceOk    = 6;
+        }
 
         /*
          * Traitement de la grande série
          */
         if (nbValue1 == 1 && nbValue2 == 1 && nbValue3 == 1 && nbValue4 == 1 && nbValue5 == 1 && nbValue6 == 1)
         {
-            score = 1200;
+            score       = 1200;
+            nbDiceOk    = 6;
         }
 
         /*
@@ -720,13 +788,28 @@ public class DiceGame
         if ((nbValue1 >= 1 && nbValue2 >= 1 && nbValue3 >= 1 && nbValue4 >= 1 && nbValue5 >= 1) ||
                 (nbValue2 >= 1 && nbValue3 >= 1 && nbValue4 >= 1 && nbValue5 >= 1 && nbValue6 >= 1))
         {
-            score = 600;
-            scoreTmp = 0;
-            if (nbValue1 == 2) scoreTmp = (int) (100);     //  si égal 2 "1", on ajoute 100 points
-            if (nbValue5 == 2) scoreTmp = (int) (50);      //  si égal 2 "5", on ajoute 50 points
+            score       = 600;
+            scoreTmp    = 0;
+            nbDiceOk    = 5;
+            if (nbValue1 == 2)
+            {
+                //  si égal 2 "1", on ajoute 100 points
+                scoreTmp  = (int) (100);
+                nbDiceOk += 1;
+            }     
+            if (nbValue5 == 2)
+            {
+                //  si égal 2 "5", on ajoute 50 points
+                scoreTmp  = (int) (50);
+                nbDiceOk += 1;
+            }      
             score += scoreTmp;
         }
-        return score;
+        
+        
+        result[0] = score;
+        result[1] = nbDiceOk;
+        return result;
     }
 
     /**
@@ -737,59 +820,63 @@ public class DiceGame
         /*
          * Déclaration des constantes.
          */
-        final int NB_PLAYER_MIN = 2;
-        final int NB_PLAYER_MAX = 127;
-        final int LG_NAME_MIN = 3;
-        final int LG_NAME_MAX = 30;
-        final int LG_COMMAND_MIN = 1;
-        final int LG_COMMAND_MAX = 7;
+        final int       NB_PLAYER_MIN   = 2;
+        final int       NB_PLAYER_MAX   = 127;
+        final int       LG_NAME_MIN     = 3;
+        final int       LG_NAME_MAX     = 30;
+        final int       LG_COMMAND_MIN  = 1;
+        final int       LG_COMMAND_MAX  = 7;
+        final String    TELL_WELCOME    = "Jeu de dés 10000";
+        final String    ASK_NB_PLAYERS  = "Veuillez indiquer le nombre de joueurs. (Vous + n IA) : ";
+        final String    ASK_NAME        = "Indiquez votre nom : ";
+        final String    TELL_PL_NAME    = "Joueur ";
 
         /*
          * Déclaration des variables globales.
          */
-        boolean quitTheGame     = false;                    //  stocke si le jeu est fini ou non. Sert pour la boucle principale
-        boolean endOfTheGame    = false;                    //  Vérifie si un joueur à atteint le score nécessaire. Sert pour la boucle principale
-        boolean endOfTurn       = false;                    //  défini si le tour est terminé pour le joueur
-        int    nbPlayers       = 2;                        //  stocke le nombre de joureurs (1 humain + n IA) par défaut 2 (limite 127 ?) => changement par l'utilisation d'arguments ?
-        int    winnerIndice    = -1;                       //  Indice du joueur qui gagne la partie
-        int     nbTurn          = 0;                        //  stocke le numéro du tour actuel (démarre à #0)
-        int   scoreToAdd      = 0;                        //  stocke le score du tour
-        int   upToGo          = 10000;                    //  stocke le score à atteindre
-        int   upToOpen        = 700;                      //  stocke le score pour ouvrir en un seul jet
-        String  playerCommand   = "";                       //  stocke la commande du joueur
+        boolean quitTheGame     = false;    //  stocke si le jeu est fini ou non. Sert pour la boucle principale
+        boolean endOfTheGame    = false;    //  Vérifie si un joueur à atteint le score nécessaire. Sert pour la boucle principale
+        boolean endOfTurn       = false;    //  défini si le tour est terminé pour le joueur
+        int     nbPlayers       = 2;        //  stocke le nombre de joureurs (1 humain + n IA) par défaut 2 (limite 127 ?) => changement par l'utilisation d'arguments ?
+        int     winnerIndice    = -1;       //  Indice du joueur qui gagne la partie
+        int     nbTurn          = 0;        //  stocke le numéro du tour actuel (démarre à #0)
+        int     scoreToAdd      = 0;        //  stocke le score du tour
+        int     upToGo          = 10000;    //  stocke le score à atteindre
+        int     upToOpen        = 700;      //  stocke le score pour ouvrir en un seul jet
+        String  playerCommand   = "";       //  stocke la commande du joueur
 
         /*
          * Affichage des informations de début de programme.
          */
-        System.out.println("Jeu de dés 10000");
+        System.out.println(TELL_WELCOME);
 
         /*
          * Demande du nombre de joueurs. Limite min 2, max 127.
          */
-        nbPlayers = getValueFromQuestion("Veuillez indiquer le nombre de joueurs. (Vous + n IA) : ", NB_PLAYER_MIN, NB_PLAYER_MAX);
+        nbPlayers = getValueFromQuestion(ASK_NB_PLAYERS, NB_PLAYER_MIN, NB_PLAYER_MAX);
 
         /*
          * Déclaration des variables 'dynamiques': tableaux dépendants des réponses du joueurs.
          */
-        boolean[] playerIsAI    = new boolean[nbPlayers];   //  stocke si le joueur est une IA
-        int[]   playerScore   = new int[nbPlayers];     //  stocke le score de chaque joueur (limite 32767 ?)
-        String[]  playerName    = new String[nbPlayers];    //  stocke le nom du joueur [indice = numéro du joueur]
-        boolean[] playerIsOpen  = new boolean[nbPlayers];   //  stocke si le joueur a ouvert
+        boolean[]   playerIsAI    = new boolean[nbPlayers]; //  stocke si le joueur est une IA
+        int[]       playerScore   = new int[nbPlayers];     //  stocke le score de chaque joueur (limite 32767 ?)
+        String[]    playerName    = new String[nbPlayers];  //  stocke le nom du joueur [indice = numéro du joueur]
+        boolean[]   playerIsOpen  = new boolean[nbPlayers]; //  stocke si le joueur a ouvert
 
         /*
          * Récupération du nom et initialisation du joueur réel.
          */
-        playerName[0]           = getValueFromQuestion("Indiquez votre nom : ", LG_NAME_MIN, LG_NAME_MAX, false);
-        playerIsAI[0]           = false;
-        playerScore[0]          = 0;
-        playerIsOpen[0]         = false;
+        playerName[0]   = getValueFromQuestion(ASK_NAME, LG_NAME_MIN, LG_NAME_MAX, false);
+        playerIsAI[0]   = false;
+        playerScore[0]  = 0;
+        playerIsOpen[0] = false;
 
         /*
          * Initialisation des autres joueurs (IA).
          */
         for (int loopPlayer = 1; loopPlayer < nbPlayers; loopPlayer++)
         {
-            playerName[loopPlayer]      = "Joueur " + loopPlayer;
+            playerName[loopPlayer]      = TELL_PL_NAME + loopPlayer;
             playerIsAI[loopPlayer]      = true;
             playerScore[loopPlayer]     = 0;
             playerIsOpen[loopPlayer]    = false;
@@ -875,12 +962,17 @@ public class DiceGame
                     }
 
                     /*
+                     * Si le score à ajouter est négatif (-1000), on ne peut pas descendre en dessous de 0
                      * Si le joueur ne dépasse pas le score final avec le score du tour, on l'ajoute
                      * Si le joueur a atteint le score exact, on ajoute le double
                      * (pour pouvoir annuler si plusieurs joueurs ont atteint ce score exact)
                      * Si le joueur a dépassé le score exact, on ne comptabilise pas ses points.
                      */
-                    if ((playerScore[loopPlayer] + scoreToAdd) < upToGo)
+                    if ((playerScore[loopPlayer] + scoreToAdd) < 0)
+                    {
+                        playerScore[loopPlayer] = 0;
+                    } 
+                    else if ((playerScore[loopPlayer] + scoreToAdd) < upToGo)
                     {
                         playerScore[loopPlayer] += scoreToAdd;
                     }
@@ -911,6 +1003,7 @@ public class DiceGame
                     scoreToAdd = 0;
                     scoreToAdd = playTheDice(playerIsOpen[loopPlayer], upToOpen, true);
                     if (scoreToAdd >= upToOpen) playerIsOpen[loopPlayer] = true;
+                    if ((playerScore[loopPlayer] + scoreToAdd) < 0) playerScore[loopPlayer] = 0; 
                     if ((playerScore[loopPlayer] + scoreToAdd) < upToGo)
                     {
                         playerScore[loopPlayer] += scoreToAdd;
