@@ -36,7 +36,7 @@ public class DiceGame
      * @param winnerIndice Indice du joueur gagnant
      * @since 1.0
      */
-    private static void displayWinLooseMessage(int winnerIndice)
+    public static void displayWinLooseMessage(int winnerIndice)
     {
         if (winnerIndice == 0)
         {
@@ -67,7 +67,7 @@ public class DiceGame
      * @param playerName Nom du joueur
      * @since 1.0
      */
-    private static void displayStartMessage(String playerName)
+    public static void displayStartMessage(String playerName)
     {
         System.out.println();
         System.out.println("Bonjour " + playerName + ", la partie commence.");
@@ -81,7 +81,7 @@ public class DiceGame
      * @param nbTurn Numéro du tour en cours
      * @since 1.0
      */
-    private static void displayTurnMessage(int nbTurn)
+    public static void displayTurnMessage(int nbTurn)
     {
         System.out.println("*******************************************************************************");
         System.out.println("*                                                                             *");
@@ -101,7 +101,7 @@ public class DiceGame
      * Affichage du menu (help)
      * @since 1.0
      */
-        private static void displayHelp()
+        public static void displayHelp()
     {
         System.out.println();
         System.out.println("Commandes disponibles :");
@@ -118,7 +118,7 @@ public class DiceGame
      * Affichage des règles
      * @since 1.0
      */
-    private static void displayRules(int upToOpen)
+    public static void displayRules(int upToOpen)
     {
         System.out.println("Règles du jeu 10000 (source: Wikipédia) :");
         System.out.println("Dans le temps, ce jeu était plus particulièrement joué par les marins (ou pour les plus fantaisistes par les pirates), " +
@@ -153,7 +153,7 @@ public class DiceGame
      * Affichage du barème de points
      * @since 1.0
      */
-    private static void displayScoring(int upToOpen)
+    public static void displayScoring(int upToOpen)
     {
         System.out.println("Barème de points (source: Wikipédia) :");
         System.out.println("- Pour démarrer, il faut avoir dans un seul lancer un minimum de " + upToOpen + " points\n" +
@@ -182,7 +182,7 @@ public class DiceGame
      * @param nbTurn nombre de tours effectués
      * @param upToGo score à atteindre
      */
-    private static void displayScore(int nbPlayers, String[] playerName, int[] playerScore, int nbTurn, int upToGo, int upToOpen)
+    public static void displayScore(int nbPlayers, String[] playerName, int[] playerScore, int nbTurn, int upToGo, int upToOpen)
     {
         System.out.println("*******************************************************************************");
         System.out.println("* Nom des joueurs                                               * Score       *");
@@ -222,7 +222,7 @@ public class DiceGame
      * @param scoreJet2 résultat du lancé de dés n°2
      * @param isSecondJet indique si le deuximème jet a été effectué
      */
-    private static void displayDiceResult(int[] diceJet1, int[] diceJet2, int scoreJet1, int scoreJet2, boolean isSecondJet)
+    public static void displayDiceResult(int[] diceJet1, int[] diceJet2, int scoreJet1, int scoreJet2, boolean isSecondJet)
     {
         int nbDiceJet1 = (int) diceJet1.length;
         int nbDiceJet2 = (int) diceJet2.length;
@@ -294,7 +294,7 @@ public class DiceGame
      * @param isAI indique si le joueur est une IA
      * @return le score obtenu et à ajouter
      */
-    private static int playTheDice(boolean playerIsOpen, int upToOpen, boolean isAI)
+    public static int playTheDice(boolean playerIsOpen, int upToOpen, boolean isAI)
     {
         final int LG_COMMAND_DICE_MIN   = 1;
         final int LG_COMMAND_DICE_MAX   = 12;
@@ -425,7 +425,7 @@ public class DiceGame
      * @since 1.0
      * @return Le résultat du dé de 1 à 6
      */
-    private static int randomDice()
+    public static int randomDice()
     {
         int min     = 1;
         int max     = 6;
@@ -443,7 +443,7 @@ public class DiceGame
      * @param isAI Indique si le joueur est une IA
      * @return Vrai ou Faux
      */
-    private static boolean playerHasOpen(int scoreTmp, int upToOpen, boolean playerIsOpen, boolean isAI)
+    public static boolean playerHasOpen(int scoreTmp, int upToOpen, boolean playerIsOpen, boolean isAI)
     {
         if (scoreTmp < upToOpen && !playerIsOpen)
         {
@@ -466,7 +466,7 @@ public class DiceGame
      * @param nbDice le nombre de dés à lancer
      * @return un tableau contenant le résultat du jet de dés
      */
-    private static int[] launchTheDice(int nbDice)
+    public static int[] launchTheDice(int nbDice)
     {
         int[] valueDice = new int[nbDice];
         for (int loop = 0; loop < nbDice; loop++)
@@ -482,7 +482,7 @@ public class DiceGame
      * @param valueDice le tableau du premier jet
      * @return La chaine de dés à relancer
      */
-    private static String getStringDiceByAI(int[] valueDice)
+    public static String getStringDiceByAI(int[] valueDice)
     {
         int nbDice = (int) valueDice.length;
         String stringDice = "";
@@ -497,7 +497,7 @@ public class DiceGame
      * @param reloadDiceString la chaine contenant les numéros de dés à relancer
      * @return Le tableau des numéros de dés à relancer
      */
-    private static int[] extractDiceToReloadFromString(String reloadDiceString)
+    public static int[] extractDiceToReloadFromString(String reloadDiceString)
     {
         if (reloadDiceString.length() > 0)
         {
@@ -535,7 +535,7 @@ public class DiceGame
      * @return la réponse donnée de type int
      * @see getValueFromQuestion(String question, int min, int max, boolean nothingToDo)
      */
-    private static int getValueFromQuestion(String question, int min, int max)
+    public static int getValueFromQuestion(String question, int min, int max)
     {
         Scanner scan    = new Scanner(System.in);
         int answer      = -1;
@@ -573,7 +573,7 @@ public class DiceGame
      * @return la réponse donnée de type String
      * @see getValueFromQuestion(String question, int min, int max)
      */
-    private static String getValueFromQuestion(String question, int min, int max, boolean nothingToDo)
+    public static String getValueFromQuestion(String question, int min, int max, boolean nothingToDo)
     {
         Scanner scan    = new Scanner(System.in);
         String answer   = "";
@@ -608,7 +608,7 @@ public class DiceGame
      * @param valueDice tableau de résultat du jet de dé
      * @return Un tableau avec le résultat du score dans [0] et le nombre de dés valant des points dans [1] 
      */
-    private static int[] scoreCalculation(int[] valueDice)
+    public static int[] scoreCalculation(int[] valueDice)
     {
         int[] result    =  new int[2];
         int nbDiceOk    = 0;
